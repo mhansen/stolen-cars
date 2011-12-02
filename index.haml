@@ -4,33 +4,27 @@
   %link(rel="stylesheet" href="bootstrap.min.css")
   :css
     body { padding-top: 60px; }
-    #graph {
-      position: absolute;
-      top: 60px;
-      right: 20px;
-      left: 260px;
-      bottom: 10px;
-      background-color: pink;
+    #graph svg {
+      background-color: #ddd;
     }
 
 .topbar
   .topbar-inner
     .container-fluid
-      %a.brand(href="#") Viz
+      %a.brand(href="#") NZ Stolen Cars
 
-.container-fluid
-  .sidebar
-    .well#legend
-      %h5 Legend
-      :markdown
-        - hi
-        - ho
-        - hu
-        - ha
 
-        Waiting for data...
+#graph.container-fluid
 
-#graph
+#legend.container-fluid
+  %h5 Legend
+  :markdown
+    - hi
+    - ho
+    - hu
+    - ha
+
+    Waiting for data...
 
 %script(src="jquery-1.7.1.min.js")
 %script(src="underscore-min.js")
