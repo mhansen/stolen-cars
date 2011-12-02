@@ -1,5 +1,5 @@
 window.GraphView = Backbone.View.extend
-  render: (model, groupBy) ->
+  render: (model) ->
     data = model.data()
     $(@el).empty()
     days = {}
@@ -11,8 +11,6 @@ window.GraphView = Backbone.View.extend
     days = _.toArray(days)
     for day in days
       day.sort (a,b) -> if a.color < b.color then 1 else -1
-
-    $(@el).text "rendered, grouping by " + groupBy
 
     width = 600
     height = 500

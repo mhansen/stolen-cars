@@ -1,3 +1,3 @@
 window.LegendView = Backbone.View.extend
-  render: (data, groupBy) ->
-    $(@el).text "rendered, grouping by " + groupBy
+  render: (data) ->
+    $(@el).text "rendered legend"
