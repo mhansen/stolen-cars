@@ -12,28 +12,28 @@ window.GraphView = Backbone.View.extend
     for day in days
       day.sort (a,b) -> if a.color < b.color then 1 else -1
 
-    width = 880 * 3
-    height = 800
+    width = 800
+    height = 880 * 3
     ypadding = 30
-    xpadding = 30
-    carheight = 17
-    carwidth = 13
+    xpadding = 50
+    carheight = 13
+    carwidth = 17
 
     cars = d3.select(@el).
       append("svg:svg").
       attr("width", width + 2 * xpadding).
-      attr("height", height + ypadding)
+      attr("height", height + 2 * ypadding)
 
     minDate = d3.min(data, (d) -> d.dateReportedStolen)
     maxDate = d3.max(data, (d) -> d.dateReportedStolen)
-    x = d3.time.scale().
+    y = d3.time.scale().
       domain([minDate, maxDate]).
-      range([xpadding, width + xpadding])
+      range([ypadding, height + ypadding])
 
     maxCarsPerDay = d3.max(days, (d) -> d.length)
-    y = d3.scale.linear().
+    x = d3.scale.linear().
       domain([0, maxCarsPerDay + 1]).
-      range([0, height])
+      range([xpadding, width + xpadding])
 
     groups = cars.selectAll("g").
       data(days).
@@ -45,20 +45,20 @@ window.GraphView = Backbone.View.extend
       data((d) -> d).
       enter().
       append("svg:rect").
-      attr("x", (d) -> x(d.dateReportedStolen)).
-      attr("y", (d, i) -> height - y(i)).
+      attr("y", (d) -> y(d.dateReportedStolen)).
+      attr("x", (d, i) -> x(i)).
       attr("rx", 5).
       attr("width", carwidth).
       attr("height", carheight).
       attr("fill", (d) -> d.color)
     
-    cars.selectAll("line.xLabels").
-      data(x.ticks(10)).
-      enter().
-      append("svg:text").
-      text(x.tickFormat(10)).
-      attr("x", x).
-      attr("y", height).
-      attr("text-anchor", "middle").
-      attr("class", "xLabels").
-      attr("dy", "1.5em")
+    #cars.selectAll("line.yLabels").
+      #data(x.ticks(10)).
+      #enter().
+      #append("svg:text").
+      #text(x.tickFormat(10)).
+      #attr("x", x).
+      #attr("y", height).
+      #attr("text-anchor", "middle").
+      #attr("class", "xLabels").
+      #attr("dy", "1.5em")
