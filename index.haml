@@ -20,7 +20,7 @@
 
 .container-fluid
   .sidebar
-    .well
+    .well#legend
       %h5 Legend
       :markdown
         - hi
@@ -28,7 +28,16 @@
         - hu
         - ha
 
+        Waiting for data...
+
 #graph
 
 %script(src="jquery-1.7.1.min.js")
-%script(src="index.js")
+%script(src="underscore-min.js")
+%script(src="d3.min.js")
+%script(src="d3.time.min.js")
+%script(src="backbone-min.js")
+%script(src="AppModel.js")
+%script(src="LegendView.js")
+%script(src="GraphView.js")
+%script(src="main.js")
