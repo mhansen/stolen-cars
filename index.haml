@@ -1,0 +1,34 @@
+!!! 5
+%head
+  %meta(charset="utf-8")
+  %link(rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css")
+  :css
+    body { padding-top: 60px; }
+    #graph {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      left: 260px;
+      bottom: 10px;
+      background-color: pink;
+    }
+
+.topbar
+  .topbar-inner
+    .container-fluid
+      %a.brand(href="#") Viz
+
+.container-fluid
+  .sidebar
+    .well
+      %h5 Legend
+      :markdown
+        - hi
+        - ho
+        - hu
+        - ha
+
+#graph
+
+%script(src="jquery-1.7.1.min.js")
+%script(src="index.js")
