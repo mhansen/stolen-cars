@@ -45,7 +45,7 @@ window.GraphView = Backbone.View.extend
       append("svg:g").
       attr("day", (d) -> d[0].dateReportedStolen.toUTCString())
 
-    groups.selectAll("rect").
+    rects = groups.selectAll("rect").
       data((d) -> d).
       enter().
       append("svg:rect").
@@ -56,6 +56,9 @@ window.GraphView = Backbone.View.extend
       attr("height", carheight).
       attr("fill", (d) -> d.color).
       attr("stroke", "black")
+
+    rects.on "mouseover", (d, i) =>
+      @options.onmouseover d, d3.event
     
     svg.selectAll("line.yLabels").
       data(y.ticks(d3.time.days.utc)).
