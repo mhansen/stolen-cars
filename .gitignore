@@ -1,6 +1,7 @@
 AppModel.js
+.autohaml
 GraphView.js
 index.html
 LegendView.js
 main.js
-.autohaml
+TooltipView.js
