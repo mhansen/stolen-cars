@@ -1,11 +1,14 @@
 window.TooltipView = Backbone.View.extend
   render: ($cars) ->
     $cars.popover
+      html: true
       title: ->
-        car = @__data__
-        car.make + " " + car.model
+        template = "{{ year }} {{ make }} {{ model }}"
+        Mustache.to_html template, @__data__
       content: ->
-        car = @__data__
-        car.plate
-      offset: 50
-      placement: "below"
+        template = """{{ color }} {{ type }}. <br>
+        Reported stolen {{ dateReportedStolen }} from {{ region }}.<br>
+        Rego: {{plate}}."""
+        Mustache.to_html template, @__data__
+      offset: 0
+      placement: "right"

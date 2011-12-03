@@ -71,6 +71,7 @@
         , placement
         , $tip
         , tp
+        , elementIsSvg
 
       if (this.hasContent() && this.enabled) {
         $tip = this.tip()
@@ -85,9 +86,10 @@
           .css({ top: 0, left: 0, display: 'block' })
           .prependTo(document.body)
 
+        elementIsSvg = this.$element[0].namespaceURI == "http://www.w3.org/2000/svg";
         pos = $.extend({}, this.$element.offset(), {
-          width: this.$element[0].offsetWidth
-        , height: this.$element[0].offsetHeight
+          width: elementIsSvg ? this.$element[0].getBBox().width : this.$element[0].offsetWidth
+        , height: elementIsSvg ? this.$element[0].getBBox().height : this.$element[0].offsetHeight
         })
 
         actualWidth = $tip[0].offsetWidth

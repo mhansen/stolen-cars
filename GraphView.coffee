@@ -6,11 +6,11 @@ window.GraphView = Backbone.View.extend
     days = {}
     for car in cars
       # parse dates from text as UTC
-      car.dateReportedStolen = d3.time.day.utc(new Date(car.dateReportedStolen))
+      car.date = d3.time.day.utc(new Date(car.dateReportedStolen))
 
-      if not days[car.dateReportedStolen]
-        days[car.dateReportedStolen] = []
-      days[car.dateReportedStolen].push car
+      if not days[car.date]
+        days[car.date] = []
+      days[car.date].push car
 
     days = _.toArray(days)
     for day in days
@@ -18,8 +18,8 @@ window.GraphView = Backbone.View.extend
 
     maxCarsPerDay = d3.max(days, (d) -> d.length)
 
-    window.minDate = d3.min(cars, (d) -> d.dateReportedStolen)
-    window.maxDate = d3.max(cars, (d) -> d.dateReportedStolen)
+    window.minDate = d3.min(cars, (d) -> d.date)
+    window.maxDate = d3.max(cars, (d) -> d.date)
     numDays = (maxDate - minDate) / (24 * 60 * 60 * 1000)
 
     width = 880
@@ -48,13 +48,13 @@ window.GraphView = Backbone.View.extend
       data(days).
       enter().
       append("svg:g").
-      attr("day", (d) -> d[0].dateReportedStolen.toUTCString())
+      attr("day", (d) -> d[0].date.toUTCString())
 
     rects = groups.selectAll("rect").
       data((d) -> d).
       enter().
       append("svg:rect").
-      attr("y", (d) -> y(d.dateReportedStolen)).
+      attr("y", (d) -> y(d.date)).
       attr("x", (d, i) -> x(i)).
       attr("rx", 6).
       attr("ry", 4).
