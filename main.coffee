@@ -1,13 +1,14 @@
 window.appModel = new AppModel
+legendModel = new LegendModel
 legendView = new LegendView el: "#legend"
-graphView = new GraphView el: "#graph"
+pictogramGraphView = new PictogramGraphView el: "#graph"
 tooltipView = new TooltipView el: "#tooltip"
 
 appModel.bind "change", (model) ->
-  legendView.render model
-  graphView.render model
-  tooltipView.render graphView.carElements()
-  console.log model.get "tab"
+  legendModel.createLegend model.get "tab"
+  legendView.render model, legendModel
+  pictogramGraphView.render model, legendModel
+  tooltipView.render pictogramGraphView.carElements()
 
 $.getJSON "stolenvehicles.json", (data) ->
   appModel.set

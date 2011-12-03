@@ -6,34 +6,48 @@
     body { 
       padding-top: 60px; 
     }
-    #graph, .tabs .active a {
+    #graph, .tabs .active a, #legend {
       background-image: url('old_mathematics.png');
     }
     .tabs {
       margin-bottom: 0;
     }
+    #legend ul {
+      list-style-type: none;
+    }
+    #legend li {
+      float: left;
+      margin-right: 10px;
+    }
+    #legend .square {
+      width: 10px;
+      height: 10px;
+      display: inline-block;
+      border: 1px solid black;
+    }
+    .clearfix {
+      overflow: hidden;
+    }
   -# mixpanel
   :javascript
     var mpq=[];mpq.push(["init","80212ef6df3c099160a6aab3962be5f9"]);(function(){var b,a,e,d,c;b=document.createElement("script");b.type="text/javascript";b.async=true;b.src=(document.location.protocol==="https:"?"https:":"http:")+"//api.mixpanel.com/site_media/js/api/mixpanel.js";a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(b,a);e=function(f){return function(){mpq.push([f].concat(Array.prototype.slice.call(arguments,0)))}};d=["init","track","track_links","track_forms","register","register_once","identify","name_tag","set_config"];for(c=0;c<d.length;c++){mpq[d[c]]=e(d[c])}})();
 
-
-
 .topbar
   .topbar-inner
     .container-fluid
-      %a.brand(href="#") NZ Stolen Cars
+      %a.brand(href="#") Visualising the NZ Police Stolen Car Database
 
-%ul.tabs(data-tabs="tabs")
-  %li.active
-    %a#color(href="#color") Vehicle Color
-  %li
-    %a#make(href="#make") Vehicle Make
-  %li
-    %a#year(href="#year") Vehicle Age
+#tabs.container
+  %ul.tabs(data-tabs="tabs")
+    %li.active
+      %a#color(href="#color") Vehicle Color
+    %li
+      %a#make(href="#make") Vehicle Make
+    %li
+      %a#year(href="#year") Vehicle Age
 
-#graph.container-fluid
-
-#legend.container-fluid Waiting for data...
+#legend.container Waiting for data...
+#graph.container
 
 %script(src="jquery-1.7.1.min.js")
 %script(src="underscore-min.js")
@@ -46,6 +60,7 @@
 %script(src="mustache.js")
 %script(src="xdate.js")
 %script(src="AppModel.js")
+%script(src="LegendModel.js")
 %script(src="LegendView.js")
 %script(src="GraphView.js")
 %script(src="TooltipView.js")
