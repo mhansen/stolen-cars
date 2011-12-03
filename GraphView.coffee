@@ -32,7 +32,7 @@ window.GraphView = Backbone.View.extend
       attr("height", height + 2 * ypadding)
 
     y = d3.time.scale().
-      domain([minDate, maxDate]).
+      domain([minDate, new XDate(maxDate).addDays(1)]).
       range([ypadding, height + ypadding])
 
     x = d3.scale.linear().
