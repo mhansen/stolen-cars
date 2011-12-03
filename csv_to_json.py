@@ -9,7 +9,7 @@ import simplejson as json
 o = []
 
 for line in sys.stdin:
-    plate, color, make, model, year, t, date_reported, region = line.split(",")
+    plate, color, make, model, year, t, date_reported, region = line.rstrip().split(",")
     o.append({
         "plate": plate,
         "color": color,
