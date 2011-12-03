@@ -1,6 +1,7 @@
 AppModel.js
 .autohaml
-GraphView.js
+HorizontalBarGraph.js
+PictogramGraphView.js
 index.html
 LegendModel.js
 LegendView.js

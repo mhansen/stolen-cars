@@ -1,4 +1,18 @@
 window.LegendModel = Backbone.Model.extend
+  findFrequencies: (model) ->
+    switch appModel.tab()
+      when "color"
+        h = {}
+        for car in appModel.data()
+          if h[car.color]
+            h[car.color]++
+          else
+            h[car.color] = 1
+        data = for key, freq of h
+          { text: key, color: key, freq: freq }
+        data.sort (a, b) -> b.freq - a.freq
+    return data
+
   createLegend: (colorKey) ->
     @set compareFunction: switch colorKey
       when "color"

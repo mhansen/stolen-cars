@@ -6,7 +6,7 @@
     body { 
       padding-top: 60px; 
     }
-    #graph, .tabs .active a, #legend {
+    .content, .tabs .active a {
       background-image: url('old_mathematics.png');
     }
     .tabs {
@@ -46,8 +46,10 @@
     %li
       %a#year(href="#year") Vehicle Age
 
-#legend.container Waiting for data...
-#graph.container
+.container.content
+  #legend
+  #mostPopular
+  #pictogram
 
 %script(src="jquery-1.7.1.min.js")
 %script(src="underscore-min.js")
@@ -62,7 +64,8 @@
 %script(src="AppModel.js")
 %script(src="LegendModel.js")
 %script(src="LegendView.js")
-%script(src="GraphView.js")
+%script(src="PictogramGraphView.js")
+%script(src="HorizontalBarGraph.js")
 %script(src="TooltipView.js")
 %script(src="main.js")
 
