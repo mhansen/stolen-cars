@@ -1,13 +1,7 @@
 window.appModel = new AppModel
-
-legendView = new LegendView
-  el: "#legend"
-
-graphView = new GraphView
-  el: "#graph"
-
-tooltipView = new TooltipView
-  el: "#tooltip"
+legendView = new LegendView el: "#legend"
+graphView = new GraphView el: "#graph"
+tooltipView = new TooltipView el: "#tooltip"
 
 appModel.bind "change", (model) ->
   legendView.render model
