@@ -10,5 +10,5 @@ window.TooltipView = Backbone.View.extend
         Reported stolen {{ dateReportedStolen }} from {{ region }} Police District.<br>
         Rego: {{plate}}."""
         Mustache.to_html template, @__data__
-      offset: 0
+      offset: 2
       placement: "right"

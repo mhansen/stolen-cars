@@ -23,7 +23,7 @@ window.GraphView = Backbone.View.extend
     numDays = (maxDate - minDate) / (24 * 60 * 60 * 1000)
 
     width = 880
-    height = 7000
+    height = 2500
     ypadding = 30
     xpadding = 60
     carpadding = 3
@@ -56,8 +56,8 @@ window.GraphView = Backbone.View.extend
       append("svg:rect").
       attr("y", (d) -> y(d.date)).
       attr("x", (d, i) -> x(i)).
-      attr("rx", 6).
-      attr("ry", 4).
+      attr("rx", 1).
+      attr("ry", 1).
       attr("width", carwidth).
       attr("height", carheight).
       attr("fill", (d) -> d.color).
