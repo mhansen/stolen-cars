@@ -18,6 +18,7 @@ appModel.bind "change", (model) ->
 $.getJSON "stolenvehicles.json", (data) ->
   appModel.set
     data: data
+    tab: "color"
 
   $(".tabs").on "change", (e) ->
     appModel.set

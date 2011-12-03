@@ -2,6 +2,7 @@ window.GraphView = Backbone.View.extend
   carElements: -> @$("rect")
   render: (model) ->
     cars = model.data()
+    colorKey = model.get "tab"
     $(@el).empty()
     days = {}
     for car in cars
@@ -13,8 +14,40 @@ window.GraphView = Backbone.View.extend
       days[car.date].push car
 
     days = _.toArray(days)
+
+    switch colorKey
+      when "color"
+        compareFunction = (a, b) ->
+          if a.color > b.color then 1 else -1
+        color = (d) -> d.color
+      when "make"
+        compareFunction = (a, b) ->
+          if a.make + a.model > b.make + b.model then 1 else -1
+        color = (d) ->
+          switch d.make
+            when "Nissan" then "#1f77b4"
+            when "Toyota" then "#ff7f0e"
+            when "Trailer" then "#2ca02c"
+            when "Subaru" then "#d62728"
+            when "Mitsubishi" then "#9467bd"
+            when "Honda" then "#8c564b"
+            when "Mazda" then "#e377c2"
+            when "Ford" then "#7f7f7f"
+            when "Holden" then "#bcbd22"
+            when "Suzuki" then "#17becf"
+            else "grey"
+      when "year"
+        compareFunction = (a, b) ->
+          a.year - b.year
+        window.colorScale = d3.scale.linear().
+          domain([1980, 1989, 1990, 1999, 2000, 2009, 2010, 2012]).
+          range(["#704214", "white", "red", "white", "green", "white", "blue", "white"]).
+          clamp(true)
+        color = (d) -> colorScale(d.year)
+
+
     for day in days
-      day.sort (a,b) -> if a.color < b.color then 1 else -1
+      day.sort compareFunction
 
     maxCarsPerDay = d3.max(days, (d) -> d.length)
 
@@ -60,7 +93,7 @@ window.GraphView = Backbone.View.extend
       attr("ry", 1).
       attr("width", carwidth).
       attr("height", carheight).
-      attr("fill", (d) -> d.color).
+      attr("fill", color).
       attr("stroke", "black")
     
     svg.selectAll("line.yLabels").

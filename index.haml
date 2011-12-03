@@ -5,7 +5,12 @@
   :css
     body { 
       padding-top: 60px; 
+    }
+    #graph, .tabs .active a {
       background-image: url('old_mathematics.png');
+    }
+    .tabs {
+      margin-bottom: 0;
     }
 
 .topbar
@@ -13,16 +18,13 @@
     .container-fluid
       %a.brand(href="#") NZ Stolen Cars
 
-
 %ul.tabs(data-tabs="tabs")
   %li.active
-    %a#color(href="#color") Color by Color
+    %a#color(href="#color") Vehicle Color
   %li
-    %a#make(href="#make") Color by Make
+    %a#make(href="#make") Vehicle Make
   %li
-    %a#model(href="#model") Color by Model
-  %li
-    %a#year(href="#year") Color by Year
+    %a#year(href="#year") Vehicle Age
 
 #graph.container-fluid
 
