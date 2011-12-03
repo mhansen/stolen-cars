@@ -1,11 +1,8 @@
-window.PictogramGraphView = Backbone.View.extend
-  carElements: -> @$("rect")
-  render: (model, legendModel) ->
-    cars = model.data()
-    colorKey = model.get "tab"
+window.ColorPictogram = Backbone.View.extend
+  render: (vehicles) ->
     $(@el).empty()
     days = {}
-    for car in cars
+    for car in vehicles
       # parse dates from text as UTC
       car.date = d3.time.day.utc(new Date(car.dateReportedStolen))
 
@@ -16,12 +13,13 @@ window.PictogramGraphView = Backbone.View.extend
     days = _.toArray(days)
 
     for day in days
-      day.sort legendModel.get "compareFunction"
+      day.sort (a, b) ->
+        if a.color > b.color then 1 else -1
 
-    maxCarsPerDay = d3.max(days, (d) -> d.length)
+    maxVehiclesPerDay = d3.max(days, (d) -> d.length)
 
-    window.minDate = d3.min(cars, (d) -> d.date)
-    window.maxDate = d3.max(cars, (d) -> d.date)
+    window.minDate = d3.min(vehicles, (d) -> d.date)
+    window.maxDate = d3.max(vehicles, (d) -> d.date)
     numDays = (maxDate - minDate) / (24 * 60 * 60 * 1000)
 
     width = 880
@@ -31,7 +29,7 @@ window.PictogramGraphView = Backbone.View.extend
     carpadding = 3
 
     carheight = (height / numDays) - carpadding
-    carwidth = (width / maxCarsPerDay) - carpadding
+    carwidth = (width / maxVehiclesPerDay) - carpadding
 
     $(@el).append $("<h5>All Stolen Vehicle Colors, Each Day</h5>")
 
@@ -45,7 +43,7 @@ window.PictogramGraphView = Backbone.View.extend
       range([0, height - carheight])
 
     x = d3.scale.linear().
-      domain([0, maxCarsPerDay + 1]).
+      domain([0, maxVehiclesPerDay + 1]).
       range([xpadding, width + xpadding])
 
     groups = svg.selectAll("g").
@@ -54,7 +52,7 @@ window.PictogramGraphView = Backbone.View.extend
       append("svg:g").
       attr("day", (d) -> d[0].date.toUTCString())
 
-    rects = groups.selectAll("rect").
+    rects = groups.selectAll("rect.car").
       data((d) -> d).
       enter().
       append("svg:rect").
@@ -64,8 +62,9 @@ window.PictogramGraphView = Backbone.View.extend
       attr("ry", 1).
       attr("width", carwidth).
       attr("height", carheight).
-      attr("fill", legendModel.get "colorFunction").
-      attr("stroke", "black")
+      attr("fill", (d) -> d.color or "white").
+      attr("stroke", "black").
+      attr("class", "car")
     
     svg.selectAll("line.yLabels").
       data(y.ticks(d3.time.days.utc)).
@@ -79,3 +78,16 @@ window.PictogramGraphView = Backbone.View.extend
       attr("class", "yLabels").
       attr("dy", carheight/2).
       attr("dx", "-0.5em")
+
+    @$("rect.car").popover
+      html: true
+      title: ->
+        template = "{{ year }} {{ make }} {{ model }}"
+        Mustache.to_html template, @__data__
+      content: ->
+        template = """{{ color }} {{ type }}. <br>
+        Reported stolen {{ dateReportedStolen }} from {{ region }} Police District.<br>
+        Rego: {{plate}}."""
+        Mustache.to_html template, @__data__
+      offset: 2
+      placement: "right"

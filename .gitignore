@@ -1,9 +1,7 @@
 AppModel.js
 .autohaml
-HorizontalBarGraph.js
-PictogramGraphView.js
 index.html
-LegendModel.js
-LegendView.js
 main.js
-TooltipView.js
+view-by-color/ColorHorizontalBarGraph.js
+view-by-color/ColorLegend.js
+view-by-color/ColorPictogram.js

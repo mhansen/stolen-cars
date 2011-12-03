@@ -1,33 +1,26 @@
 window.appModel = new AppModel
-legendModel = new LegendModel
-legendView = new LegendView el: "#legend"
-mostPopularColors = new HorizontalBarGraph el: "#mostPopular"
-pictogramGraphView = new PictogramGraphView el: "#pictogram"
-tooltipView = new TooltipView el: "#tooltip"
+
+colorLegend = new ColorLegend el: "#legend"
+mostPopularColors = new ColorHorizontalBarGraph el: "#mostPopular"
+colorPictogram = new ColorPictogram el: "#pictogram"
 
 appModel.bind "change", (model) ->
-  legendModel.createLegend model.get "tab"
-  frequencies = legendModel.findFrequencies appModel
+  switch model.tab()
+    when "color"
+      colorLegend.render model.vehicles()
+      mostPopularColors.render model.vehicles()
+      colorPictogram.render model.vehicles()
 
-  legendView.render frequencies
-  mostPopularColors.render frequencies
+$(document).ready ->
+  $.getJSON "stolenvehicles.json", (vehicles) ->
+    appModel.set vehicles: vehicles, tab: "color"
+    $(".tabs").on "change", (e) -> appModel.set tab: e.target.id
 
-  pictogramGraphView.render model, legendModel
-  tooltipView.render pictogramGraphView.carElements()
+  # tracking
+  appModel.bind "change:tab", (model, tab) -> mpq.track "New Tab: #{tab}"
 
-$.getJSON "stolenvehicles.json", (data) ->
-  appModel.set
-    data: data
-    tab: "color"
+  trackHover = -> mpq.track "Hovered over car"
+  $(document).on "mouseover", "#pictogram rect", (_.throttle trackHover, 1000)
 
-  $(".tabs").on "change", (e) ->
-    appModel.set tab: e.target.id
-
-# tracking
-appModel.bind "change:tab", (model, tab) -> mpq.track "New Tab: #{tab}"
-
-trackHover = -> mpq.track "Hovered over car"
-$(document).on "mouseover", "#pictogram rect", _.throttle trackHover, 1000
-
-trackScroll = -> mpq.track "Scrolled"
-$(document).on "scroll", (_.throttle trackScroll, 1000)
+  trackScroll = -> mpq.track "Scrolled"
+  $(document).on "scroll", (_.throttle trackScroll, 1000)
