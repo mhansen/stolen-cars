@@ -1,13 +1,16 @@
 window.GraphView = Backbone.View.extend
   render: (model) ->
-    data = model.data()
+    cars = model.data()
     $(@el).empty()
     days = {}
-    for car in data
+    for car in cars
+      # parse dates from text as UTC
       car.dateReportedStolen = d3.time.day.utc(new Date(car.dateReportedStolen))
+
       if not days[car.dateReportedStolen]
         days[car.dateReportedStolen] = []
       days[car.dateReportedStolen].push car
+
     days = _.toArray(days)
     for day in days
       day.sort (a,b) -> if a.color < b.color then 1 else -1
@@ -22,9 +25,10 @@ window.GraphView = Backbone.View.extend
     height = 7000
     ypadding = 30
     xpadding = 60
+    carpadding = 3
 
-    carheight = (height / numDays) - 2
-    carwidth = (width / maxCarsPerDay) - 2
+    carheight = (height / numDays) - carpadding
+    carwidth = (width / maxCarsPerDay) - carpadding
 
     svg = d3.select(@el).
       append("svg:svg").
@@ -32,8 +36,8 @@ window.GraphView = Backbone.View.extend
       attr("height", height + 2 * ypadding)
 
     y = d3.time.scale().
-      domain([minDate, new XDate(maxDate).addDays(1)]).
-      range([ypadding, height + ypadding])
+      domain([new XDate(maxDate).addMinutes(1), minDate]).
+      range([ypadding, ypadding + (height - carheight)])
 
     x = d3.scale.linear().
       domain([0, maxCarsPerDay + 1]).
@@ -51,7 +55,8 @@ window.GraphView = Backbone.View.extend
       append("svg:rect").
       attr("y", (d) -> y(d.dateReportedStolen)).
       attr("x", (d, i) -> x(i)).
-      attr("rx", 5).
+      attr("rx", 6).
+      attr("ry", 4).
       attr("width", carwidth).
       attr("height", carheight).
       attr("fill", (d) -> d.color).
