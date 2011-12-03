@@ -1,6 +1,11 @@
 window.TooltipView = Backbone.View.extend
-  className: "popover left"
-  render: () ->
-    console.log "rendered tooltip"
-  remove: () ->
-    console.log "removed tooltip"
+  render: ($cars) ->
+    $cars.popover
+      title: ->
+        car = @__data__
+        car.make + " " + car.model
+      content: ->
+        car = @__data__
+        car.plate
+      offset: 50
+      placement: "below"

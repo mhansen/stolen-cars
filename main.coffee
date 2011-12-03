@@ -3,17 +3,16 @@ window.appModel = new AppModel
 legendView = new LegendView
   el: "#legend"
 
-tooltipView = new TooltipView
-  el: "#tooltip"
-
 graphView = new GraphView
   el: "#graph"
-  onmouseover: (data, event) ->
-    tooltipView.render()
+
+tooltipView = new TooltipView
+  el: "#tooltip"
 
 appModel.bind "change:data", (model) ->
   legendView.render model
   graphView.render model
+  tooltipView.render graphView.carElements()
 
 $.getJSON "stolenvehicles.json", (data) ->
   appModel.set

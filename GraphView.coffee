@@ -1,4 +1,5 @@
 window.GraphView = Backbone.View.extend
+  carElements: -> @$("rect")
   render: (model) ->
     cars = model.data()
     $(@el).empty()
@@ -17,8 +18,8 @@ window.GraphView = Backbone.View.extend
 
     maxCarsPerDay = d3.max(days, (d) -> d.length)
 
-    window.minDate = d3.min(data, (d) -> d.dateReportedStolen)
-    window.maxDate = d3.max(data, (d) -> d.dateReportedStolen)
+    window.minDate = d3.min(cars, (d) -> d.dateReportedStolen)
+    window.maxDate = d3.max(cars, (d) -> d.dateReportedStolen)
     numDays = (maxDate - minDate) / (24 * 60 * 60 * 1000)
 
     width = 880
@@ -61,9 +62,6 @@ window.GraphView = Backbone.View.extend
       attr("height", carheight).
       attr("fill", (d) -> d.color).
       attr("stroke", "black")
-
-    rects.on "mouseover", (d, i) =>
-      @options.onmouseover d, d3.event
     
     svg.selectAll("line.yLabels").
       data(y.ticks(d3.time.days.utc)).
