@@ -15,5 +15,13 @@ $.getJSON "stolenvehicles.json", (data) ->
     tab: "color"
 
   $(".tabs").on "change", (e) ->
-    appModel.set
-      tab: e.target.id
+    appModel.set tab: e.target.id
+
+# tracking
+appModel.bind "change:tab", (model, tab) -> mpq.track "New Tab: #{tab}"
+
+trackHover = -> mpq.track "Hovered over car"
+$(document).on "mouseover", "#graph rect", _.throttle trackHover, 1000
+
+trackScroll = -> mpq.track "Scrolled"
+$(document).on "scroll", (_.throttle trackScroll, 1000)
