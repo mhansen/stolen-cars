@@ -14,6 +14,16 @@
       %a.brand(href="#") NZ Stolen Cars
 
 
+%ul.tabs(data-tabs="tabs")
+  %li.active
+    %a#color(href="#color") Color by Color
+  %li
+    %a#make(href="#make") Color by Make
+  %li
+    %a#model(href="#model") Color by Model
+  %li
+    %a#year(href="#year") Color by Year
+
 #graph.container-fluid
 
 #legend.container-fluid Waiting for data...
@@ -25,6 +35,7 @@
 %script(src="backbone-min.js")
 %script(src="bootstrap-twipsy.js")
 %script(src="bootstrap-popover.js")
+%script(src="bootstrap-tabs.js")
 %script(src="mustache.js")
 %script(src="xdate.js")
 %script(src="AppModel.js")
