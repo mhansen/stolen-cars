@@ -4,7 +4,7 @@ window.GraphView = Backbone.View.extend
     $(@el).empty()
     days = {}
     for car in data
-      car.dateReportedStolen = new Date(car.dateReportedStolen)
+      car.dateReportedStolen = d3.time.day.utc(new Date(car.dateReportedStolen))
       if not days[car.dateReportedStolen]
         days[car.dateReportedStolen] = []
       days[car.dateReportedStolen].push car
@@ -12,34 +12,38 @@ window.GraphView = Backbone.View.extend
     for day in days
       day.sort (a,b) -> if a.color < b.color then 1 else -1
 
-    width = 800
-    height = 880 * 3
-    ypadding = 30
-    xpadding = 50
-    carheight = 13
-    carwidth = 17
+    maxCarsPerDay = d3.max(days, (d) -> d.length)
 
-    cars = d3.select(@el).
+    window.minDate = d3.min(data, (d) -> d.dateReportedStolen)
+    window.maxDate = d3.max(data, (d) -> d.dateReportedStolen)
+    numDays = (maxDate - minDate) / (24 * 60 * 60 * 1000)
+
+    width = 880
+    height = 7000
+    ypadding = 30
+    xpadding = 60
+
+    carheight = (height / numDays) - 2
+    carwidth = (width / maxCarsPerDay) - 2
+
+    svg = d3.select(@el).
       append("svg:svg").
-      attr("width", width + 2 * xpadding).
+      attr("width", width + xpadding).
       attr("height", height + 2 * ypadding)
 
-    minDate = d3.min(data, (d) -> d.dateReportedStolen)
-    maxDate = d3.max(data, (d) -> d.dateReportedStolen)
     y = d3.time.scale().
       domain([minDate, maxDate]).
       range([ypadding, height + ypadding])
 
-    maxCarsPerDay = d3.max(days, (d) -> d.length)
     x = d3.scale.linear().
       domain([0, maxCarsPerDay + 1]).
       range([xpadding, width + xpadding])
 
-    groups = cars.selectAll("g").
+    groups = svg.selectAll("g").
       data(days).
       enter().
       append("svg:g").
-      attr("day", (d) -> d[0].dateReportedStolen)
+      attr("day", (d) -> d[0].dateReportedStolen.toUTCString())
 
     groups.selectAll("rect").
       data((d) -> d).
@@ -50,15 +54,18 @@ window.GraphView = Backbone.View.extend
       attr("rx", 5).
       attr("width", carwidth).
       attr("height", carheight).
-      attr("fill", (d) -> d.color)
+      attr("fill", (d) -> d.color).
+      attr("stroke", "black")
     
-    #cars.selectAll("line.yLabels").
-      #data(x.ticks(10)).
-      #enter().
-      #append("svg:text").
-      #text(x.tickFormat(10)).
-      #attr("x", x).
-      #attr("y", height).
-      #attr("text-anchor", "middle").
-      #attr("class", "xLabels").
-      #attr("dy", "1.5em")
+    svg.selectAll("line.yLabels").
+      data(y.ticks(d3.time.days.utc)).
+      enter().
+      append("svg:text").
+      text(d3.time.format("%d/%m/%y")).
+      attr("x", xpadding).
+      attr("y", y).
+      attr("text-anchor", "end").
+      attr("dominant-baseline", "central").
+      attr("class", "yLabels").
+      attr("dy", carheight/2).
+      attr("dx", "-0.5em")
