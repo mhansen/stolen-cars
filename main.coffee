@@ -8,6 +8,10 @@ makeLegend = new MakeLegend el: "#make .legend"
 mostPopularMakes = new MakeHorizontalBarGraph el: "#make .mostPopular"
 makePictogram = new MakePictogram el: "#make .pictogram"
 
+yearLegend = new YearLegend el: "#year .legend"
+yearHistogram = new YearHistogram el: "#year .histogram"
+yearPictogram = new YearPictogram el: "#year .pictogram"
+
 appModel.bind "change", (model) ->
   switch model.tab()
     when "#color"
@@ -18,6 +22,10 @@ appModel.bind "change", (model) ->
       makeLegend.render model.vehicles()
       mostPopularMakes.render model.vehicles()
       makePictogram.render model.vehicles()
+    when "#year"
+      yearLegend.render model.vehicles()
+      yearHistogram.render model.vehicles()
+      yearPictogram.render model.vehicles()
 
 $(document).ready ->
   $.getJSON "stolenvehicles.json", (vehicles) ->

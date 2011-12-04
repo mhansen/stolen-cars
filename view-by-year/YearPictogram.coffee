@@ -1,4 +1,4 @@
-window.ColorPictogram = Backbone.View.extend
+window.YearPictogram = Backbone.View.extend
   render: (vehicles) ->
     $(@el).empty()
     for car in vehicles
@@ -7,7 +7,7 @@ window.ColorPictogram = Backbone.View.extend
 
     days = d3.nest().
       key((d) -> d.dateReportedStolen).
-      sortValues((a, b) -> if a.color > b.color then 1 else -1).
+      sortValues((a, b) -> a.year - b.year).
       entries(vehicles)
 
     days.sort (a, b) -> if b.key > a.key then 1 else -1
@@ -27,7 +27,15 @@ window.ColorPictogram = Backbone.View.extend
     carheight = (height / numDays) - carpadding
     carwidth = (width / maxVehiclesPerDay) - carpadding
 
-    $(@el).append $("<h5>All Stolen Vehicle Colors, Each Day</h5>")
+    colorScale = d3.scale.linear().
+      # Each decade gets its own color, fading into white.
+      domain([1980,     1989,   1990,  1999,
+              2000,     2009,   2010,  2012  ]).
+      range([ "#704214","white","red", "white",
+              "green",  "white","blue","white"]).
+      clamp(true)
+
+    $(@el).append $("<h5>All Stolen Vehicle Years, Each Day</h5>")
 
     svg = d3.select(@el).
       append("svg:svg").
@@ -35,9 +43,6 @@ window.ColorPictogram = Backbone.View.extend
       attr("height", height + ypadding)
 
     y = d3.time.scale().
-      # The ticks() function isn't inclusive of the end of the
-      # range, so we need to add a minute to the day to get an
-      # axis label for that day.
       domain([new XDate(maxDate).addMinutes(1), minDate]).
       range([0, height - carheight])
 
@@ -51,6 +56,13 @@ window.ColorPictogram = Backbone.View.extend
       append("svg:g").
       attr("day", (d) -> d.values[0].date.toUTCString())
 
+    makeColors =
+      Nissan: "#1f77b4", Toyota: "#ff7f0e"
+      Trailer: "#2ca02c", Subaru: "#d62728"
+      Mitsubishi: "#9467bd", Honda: "#8c564b"
+      Mazda: "#e377c2", Ford: "#7f7f7f"
+      Holden: "#bcbd22", Suzuki: "#17becf"
+
     rects = groups.selectAll("rect.car").
       data((d) -> d.values).
       enter().
@@ -61,7 +73,7 @@ window.ColorPictogram = Backbone.View.extend
       attr("ry", 1).
       attr("width", carwidth).
       attr("height", carheight).
-      attr("fill", (d) -> d.color or "white").
+      attr("fill", (d) -> colorScale(d.year)).
       attr("stroke", "black").
       attr("class", "car")
     

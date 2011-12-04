@@ -1,25 +1,21 @@
 window.ColorLegend = Backbone.View.extend
   render: (vehicles) ->
-    h = {}
-    for car in vehicles
-      if h[car.color]
-        h[car.color]++
-      else
-        h[car.color] = 1
-    freqs = for key, freq of h
-      { text: key or "No Color", color: key, freq: freq }
-    freqs.sort (a, b) -> b.freq - a.freq
+    entries = d3.nest().
+      key((d) -> d.color or "No Color").
+      rollup((d) -> d.length).
+      entries(vehicles)
+
+    entries.sort (a, b) -> b.values - a.values
 
     template = """<h5>Legend</h5>
     <ul class="clearfix">
     {{#data}}
     <li class="span2">
-      <div class="square" style="background-color:{{color}}">
+      <div class="square" style="background-color:{{key}}">
       </div>
-      {{text}}
-      {{^text}}No color{{/text}}
-      ({{freq}})
+      {{key}}
+      ({{values}})
     </li>
     {{/data}}
     </ul>"""
-    $(@el).html Mustache.to_html template, data: freqs
+    $(@el).html Mustache.to_html template, data: entries

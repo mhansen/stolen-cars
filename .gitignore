@@ -2,9 +2,6 @@ AppModel.js
 .autohaml
 index.html
 main.js
-view-by-color/ColorHorizontalBarGraph.js
-view-by-color/ColorLegend.js
-view-by-color/ColorPictogram.js
-view-by-make/MakeHorizontalBarGraph.js
-view-by-make/MakeLegend.js
-view-by-make/MakePictogram.js
+view-by-color/*.js
+view-by-make/*.js
+view-by-year/*.js

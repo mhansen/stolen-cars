@@ -1,4 +1,4 @@
-window.MakeHorizontalBarGraph = Backbone.View.extend
+window.YearHistogram = Backbone.View.extend
   width: 790
   leftPadding: 120
   rightPadding: 30
@@ -7,23 +7,24 @@ window.MakeHorizontalBarGraph = Backbone.View.extend
 
   render: (vehicles) ->
     $(@el).empty()
-    makeColors =
-      Nissan: "#1f77b4", Toyota: "#ff7f0e"
-      Trailer: "#2ca02c", Subaru: "#d62728"
-      Mitsubishi: "#9467bd", Honda: "#8c564b"
-      Mazda: "#e377c2", Ford: "#7f7f7f"
-      Holden: "#bcbd22", Suzuki: "#17becf"
 
-    makes = d3.nest().
-      key((d) -> d.make).
+    colorScale = d3.scale.linear().
+      # Each decade gets its own color, fading into white.
+      domain([1980,     1989,   1990,  1999,
+              2000,     2009,   2010,  2012  ]).
+      range([ "#704214","white","red", "white",
+              "green",  "white","blue","white"]).
+      clamp(true)
+
+    years = d3.nest().
+      key((d) -> d.year or "No Year").
+      rollup((d) -> d.length).
       entries(vehicles)
+    years.sort (a, b) -> b.key - a.key
 
-    makes.sort (a, b) ->
-      b.values.length - a.values.length
+    $(@el).append $("<h5>Most Popular Stolen Vehicle Years</h5>")
 
-    $(@el).append $("<h5>Most Popular Stolen Vehicle Makes</h5>")
-
-    @height = (@barHeight + @barPadding) * makes.length
+    @height = (@barHeight + @barPadding) * years.length
 
     svg = d3.select(@el).
       append("svg:svg").
@@ -31,26 +32,26 @@ window.MakeHorizontalBarGraph = Backbone.View.extend
       attr("height", @height)
 
     y = d3.scale.linear().
-      domain([0, makes.length]).
+      domain([0, years.length]).
       range([0, @height])
 
     barwidth = d3.scale.linear().
-      domain([0, d3.max(makes, (d) -> d.values.length)]).
+      domain([0, d3.max(years, (d) -> d.values)]).
       range([0, @width])
 
     svg.selectAll("rect").
-      data(makes).
+      data(years).
       enter().
       append("svg:rect").
       attr("x", @leftPadding).
       attr("y", (d, i) -> y(i)).
-      attr("width", (d) -> barwidth(d.values.length)).
+      attr("width", (d) -> barwidth(d.values)).
       attr("height", @barHeight).
-      attr("fill", (d) -> makeColors[d.key] or "grey").
+      attr("fill", (d) -> colorScale(d.key)).
       attr("stroke", "black")
 
     svg.selectAll("text.yLabel").
-      data(makes).
+      data(years).
       enter().
       append("svg:text").
       attr("x", @leftPadding).
@@ -60,17 +61,17 @@ window.MakeHorizontalBarGraph = Backbone.View.extend
       attr("class", "yLabel").
       attr("dy", @barHeight/2).
       attr("dx", "-0.5em").
-      text((d) -> d.key or "No Make")
+      text((d) -> d.key)
 
     svg.selectAll("text.freq").
-      data(makes).
+      data(years).
       enter().
       append("svg:text").
-      attr("x", (d) => @leftPadding + barwidth(d.values.length)).
+      attr("x", (d) => @leftPadding + barwidth(d.values)).
       attr("y", (d, i) -> y(i)).
       attr("text-anchor", "start").
       attr("dominant-baseline", "central").
       attr("class", "freq").
       attr("dy", @barHeight/2).
       attr("dx", "+0.5em").
-      text((d) -> d.values.length)
+      text((d) -> d.values)

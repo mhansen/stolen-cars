@@ -1,22 +1,19 @@
 window.MakePictogram = Backbone.View.extend
   render: (vehicles) ->
     $(@el).empty()
-    days = {}
     for car in vehicles
       # parse dates from text as UTC
       car.date = d3.time.day.utc(new Date(car.dateReportedStolen))
 
-      if not days[car.date]
-        days[car.date] = []
-      days[car.date].push car
+    days = d3.nest().
+      key((d) -> d.dateReportedStolen).
+      sortValues((a, b) ->
+        if a.make + a.model > b.make + b.model then 1 else -1).
+      entries(vehicles)
 
-    days = _.toArray(days)
+    days.sort (a, b) -> if b.key > a.key then 1 else -1
 
-    for day in days
-      day.sort (a, b) ->
-        if a.make + a.model > b.make + b.model then 1 else -1
-
-    maxVehiclesPerDay = d3.max(days, (d) -> d.length)
+    maxVehiclesPerDay = d3.max(days, (d) -> d.values.length)
 
     window.minDate = d3.min(vehicles, (d) -> d.date)
     window.maxDate = d3.max(vehicles, (d) -> d.date)
@@ -31,7 +28,7 @@ window.MakePictogram = Backbone.View.extend
     carheight = (height / numDays) - carpadding
     carwidth = (width / maxVehiclesPerDay) - carpadding
 
-    $(@el).append $("<h5>All Stolen Vehicle Colors, Each Day</h5>")
+    $(@el).append $("<h5>All Stolen Vehicle Makes, Each Day</h5>")
 
     svg = d3.select(@el).
       append("svg:svg").
@@ -50,7 +47,7 @@ window.MakePictogram = Backbone.View.extend
       data(days).
       enter().
       append("svg:g").
-      attr("day", (d) -> d[0].date.toUTCString())
+      attr("day", (d) -> d.values[0].date.toUTCString())
 
     makeColors =
       Nissan: "#1f77b4", Toyota: "#ff7f0e"
@@ -60,7 +57,7 @@ window.MakePictogram = Backbone.View.extend
       Holden: "#bcbd22", Suzuki: "#17becf"
 
     rects = groups.selectAll("rect.car").
-      data((d) -> d).
+      data((d) -> d.values).
       enter().
       append("svg:rect").
       attr("y", (d) -> y(d.date)).
