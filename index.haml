@@ -6,20 +6,20 @@
     body { 
       padding-top: 60px; 
     }
-    .content, .tabs .active a {
+    .pill-content, .tabs .active a {
       background-image: url('old_mathematics.png');
     }
     .tabs {
       margin-bottom: 0;
     }
-    #legend ul {
+    .legend ul {
       list-style-type: none;
     }
-    #legend li {
+    .legend li {
       float: left;
       margin-right: 10px;
     }
-    #legend .square {
+    .legend .square {
       width: 10px;
       height: 10px;
       display: inline-block;
@@ -40,16 +40,21 @@
 #tabs.container
   %ul.tabs(data-tabs="tabs")
     %li.active
-      %a#color(href="#color") Vehicle Color
+      %a(href="#color") Vehicle Color
     %li
-      %a#make(href="#make") Vehicle Make
+      %a(href="#make") Vehicle Make
     %li
-      %a#year(href="#year") Vehicle Age
+      %a(href="#year") Vehicle Age
 
-.container.content
-  #legend
-  #mostPopular
-  #pictogram
+.container.pill-content
+  #color.active
+    .mostPopular
+    .legend
+    .pictogram
+  #make
+    .mostPopular makepop
+    .legend makeLegend
+    .pictogram makepic
 
 %script(src="lib/jquery-1.7.1.min.js")
 %script(src="lib/underscore-min.js")
@@ -65,6 +70,9 @@
 %script(src="view-by-color/ColorLegend.js")
 %script(src="view-by-color/ColorPictogram.js")
 %script(src="view-by-color/ColorHorizontalBarGraph.js")
+%script(src="view-by-make/MakeLegend.js")
+%script(src="view-by-make/MakePictogram.js")
+%script(src="view-by-make/MakeHorizontalBarGraph.js")
 %script(src="main.js")
 
 -# clicky
