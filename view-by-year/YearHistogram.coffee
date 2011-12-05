@@ -64,7 +64,8 @@ window.YearHistogram = Backbone.View.extend
         d3.select(this).attr("fill", colorScale(d.key))
       ).
       transition().
-      duration(2500).
+      duration(1000).
+      delay((d, i) -> i * 40).
       attr("height", (d) -> barHeight d.values).
       attr("y", (d, i) => @topPadding + @height - barHeight(d.values))
 
