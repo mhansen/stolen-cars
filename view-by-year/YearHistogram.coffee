@@ -4,7 +4,8 @@ window.YearHistogram = Backbone.View.extend
   barPadding: 0
   barWidth: 15
   height: 500
-  leftPadding: 30
+  leftPadding: 20
+  rightPadding: 20
 
   render: (vehicles) ->
     $(@el).empty()
@@ -25,6 +26,8 @@ window.YearHistogram = Backbone.View.extend
       if a.key > b.key then 1
       else if a.key < b.key then -1
       else 0
+    for year in years
+      year.toString = -> @key
 
     $(@el).append $("<h5>Age of Stolen Vehicles</h5>")
 
@@ -32,19 +35,19 @@ window.YearHistogram = Backbone.View.extend
 
     svg = d3.select(@el).
       append("svg:svg").
-      attr("width", @leftPadding + @width).
+      attr("width", @leftPadding + @width + @rightPadding).
       attr("height", @topPadding + @height + @bottomPadding)
 
-    x = d3.scale.linear().
-      domain([0, years.length]).
-      range([@leftPadding, @leftPadding + @width])
+    x = d3.scale.ordinal().
+      domain(years).
+      rangeBands([@leftPadding, @leftPadding + @width])
 
     barHeight = d3.scale.linear().
       domain([0, d3.max(years, (d) -> d.values)]).
       range([0, @height])
 
     svg.selectAll("rect.bar").
-      data(years).
+      data(years, (d) -> d.key).
       enter().
       append("svg:rect").
       attr("class", "bar").
@@ -59,15 +62,22 @@ window.YearHistogram = Backbone.View.extend
       data(years).
       enter().
       append("svg:text").
-      attr("y", (d, i) -> -x(i)).
-      attr("x", @height + @topPadding).
-      attr("text-anchor", "start").
+      attr("x", (d, i) -> x(i)).
+      attr("y", @height + @topPadding).
+      attr("text-anchor", "middle").
       attr("dominant-baseline", "central").
       attr("class", "yLabel").
-      attr("dy", -@barWidth/2).
-      attr("dx", 10).
-      text((d) -> if d.key.match /\d{4}/ then "'#{d.key.substring(2)}" else d.key).
-      attr("transform", "rotate(90)")
+      attr("dx", +@barWidth/2).
+      attr("dy", 10).
+      text((d) ->
+        number = parseInt(d.key)
+        if not number
+          d.key
+        else if number % 10 == 0
+          d.key
+        else
+          ""
+      )
 
     @$("rect.bar").twipsy
       html: false
