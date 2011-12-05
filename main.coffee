@@ -26,8 +26,21 @@ appModel.bind "change", (model) ->
       yearPictogram.render model.vehicles()
 
 $(document).ready ->
-  $.getJSON "stolenvehicles.json", (vehicles) ->
-    appModel.set vehicles: vehicles, tab: "#color"
+  d3.text "stolenvehicles.csv", (text) ->
+    vehicles = d3.csv.parseRows text, (d) ->
+      plate: d[0]
+      color: d[1]
+      make: d[2]
+      model: d[3]
+      year: parseInt d[4]
+      type: d[5]
+      dateReportedStolen: d[6]
+      region: d[7]
+
+    appModel.set
+      tab: "#year"
+      vehicles: vehicles
+
     $(".tabs").on "change", (e) -> appModel.set tab: e.target.hash
 
   # tracking
