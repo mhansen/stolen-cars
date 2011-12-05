@@ -1,9 +1,10 @@
 window.YearHistogram = Backbone.View.extend
-  width: 790
-  leftPadding: 120
-  rightPadding: 30
-  barHeight: 20
-  barPadding: 3
+  bottomPadding: 50
+  topPadding: 30
+  barPadding: 0
+  barWidth: 15
+  height: 500
+  leftPadding: 30
 
   render: (vehicles) ->
     $(@el).empty()
@@ -17,36 +18,40 @@ window.YearHistogram = Backbone.View.extend
       clamp(true)
 
     years = d3.nest().
-      key((d) -> d.year or "No Year").
+      key((d) -> d.year or "NA").
       rollup((d) -> d.length).
       entries(vehicles)
-    years.sort (a, b) -> b.key - a.key
+    years.sort (a, b) ->
+      if a.key > b.key then 1
+      else if a.key < b.key then -1
+      else 0
 
-    $(@el).append $("<h5>Most Popular Stolen Vehicle Years</h5>")
+    $(@el).append $("<h5>Age of Stolen Vehicles</h5>")
 
-    @height = (@barHeight + @barPadding) * years.length
+    @width = (@barWidth + @barPadding) * years.length
 
     svg = d3.select(@el).
       append("svg:svg").
-      attr("width", @leftPadding + @width + @rightPadding).
-      attr("height", @height)
+      attr("width", @leftPadding + @width).
+      attr("height", @topPadding + @height + @bottomPadding)
 
-    y = d3.scale.linear().
+    x = d3.scale.linear().
       domain([0, years.length]).
+      range([@leftPadding, @leftPadding + @width])
+
+    barHeight = d3.scale.linear().
+      domain([0, d3.max(years, (d) -> d.values)]).
       range([0, @height])
 
-    barwidth = d3.scale.linear().
-      domain([0, d3.max(years, (d) -> d.values)]).
-      range([0, @width])
-
-    svg.selectAll("rect").
+    svg.selectAll("rect.bar").
       data(years).
       enter().
       append("svg:rect").
-      attr("x", @leftPadding).
-      attr("y", (d, i) -> y(i)).
-      attr("width", (d) -> barwidth(d.values)).
-      attr("height", @barHeight).
+      attr("class", "bar").
+      attr("x", (d, i) -> x(i)).
+      attr("y", (d, i) => @topPadding + @height - barHeight(d.values)).
+      attr("width", @barWidth).
+      attr("height", (d) -> barHeight d.values).
       attr("fill", (d) -> colorScale(d.key)).
       attr("stroke", "black")
 
@@ -54,24 +59,18 @@ window.YearHistogram = Backbone.View.extend
       data(years).
       enter().
       append("svg:text").
-      attr("x", @leftPadding).
-      attr("y", (d, i) -> y(i)).
-      attr("text-anchor", "end").
-      attr("dominant-baseline", "central").
-      attr("class", "yLabel").
-      attr("dy", @barHeight/2).
-      attr("dx", "-0.5em").
-      text((d) -> d.key)
-
-    svg.selectAll("text.freq").
-      data(years).
-      enter().
-      append("svg:text").
-      attr("x", (d) => @leftPadding + barwidth(d.values)).
-      attr("y", (d, i) -> y(i)).
+      attr("y", (d, i) -> -x(i)).
+      attr("x", @height + @topPadding).
       attr("text-anchor", "start").
       attr("dominant-baseline", "central").
-      attr("class", "freq").
-      attr("dy", @barHeight/2).
-      attr("dx", "+0.5em").
-      text((d) -> d.values)
+      attr("class", "yLabel").
+      attr("dy", -@barWidth/2).
+      attr("dx", 10).
+      text((d) -> if d.key.match /\d{4}/ then "'#{d.key.substring(2)}" else d.key).
+      attr("transform", "rotate(90)")
+
+    @$("rect.bar").twipsy
+      html: false
+      title: -> "" + "#{@__data__.key}: #{@__data__.values} Vehicles"
+      offset: 2
+      placement: "above"
