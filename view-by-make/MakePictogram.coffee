@@ -1,12 +1,9 @@
 window.MakePictogram = Backbone.View.extend
   render: (vehicles) ->
     $(@el).empty()
-    for car in vehicles
-      # parse dates from text as UTC
-      car.date = d3.time.day.utc(new Date(car.dateReportedStolen))
 
     days = d3.nest().
-      key((d) -> d.dateReportedStolen).
+      key((d) -> d.dateString).
       sortValues((a, b) ->
         if a.make + a.model > b.make + b.model then 1 else -1).
       entries(vehicles)
@@ -15,8 +12,8 @@ window.MakePictogram = Backbone.View.extend
 
     maxVehiclesPerDay = d3.max(days, (d) -> d.values.length)
 
-    window.minDate = d3.min(vehicles, (d) -> d.date)
-    window.maxDate = d3.max(vehicles, (d) -> d.date)
+    minDate = d3.min(vehicles, (d) -> d.date)
+    maxDate = d3.max(vehicles, (d) -> d.date)
     numDays = (maxDate - minDate) / (24 * 60 * 60 * 1000)
 
     width = 880
@@ -90,7 +87,7 @@ window.MakePictogram = Backbone.View.extend
         Mustache.to_html template, @__data__
       content: ->
         template = """{{ color }} {{ type }}. <br>
-        Reported stolen {{ dateReportedStolen }} from {{ region }} Police District.<br>
+        Reported stolen {{ dateString }} from {{ region }} Police District.<br>
         Rego: {{plate}}."""
         Mustache.to_html template, @__data__
       offset: 2

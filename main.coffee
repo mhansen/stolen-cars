@@ -1,4 +1,4 @@
-window.appModel = new AppModel
+appModel = new AppModel
 
 colorLegend = new ColorLegend el: "#color .legend"
 mostPopularColors = new ColorHorizontalBarGraph el: "#color .mostPopular"
@@ -34,7 +34,8 @@ $(document).ready ->
       model: d[3]
       year: parseInt d[4]
       type: d[5]
-      dateReportedStolen: d[6]
+      dateString: d[6]
+      date: d3.time.day.utc(new Date(d[6]))
       region: d[7]
 
     appModel.set

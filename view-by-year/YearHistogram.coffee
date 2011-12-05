@@ -52,11 +52,21 @@ window.YearHistogram = Backbone.View.extend
       append("svg:rect").
       attr("class", "bar").
       attr("x", (d, i) -> x(i)).
-      attr("y", (d, i) => @topPadding + @height - barHeight(d.values)).
+      attr("y", @topPadding + @height).
       attr("width", @barWidth).
-      attr("height", (d) -> barHeight d.values).
+      attr("height", 0).
       attr("fill", (d) -> colorScale(d.key)).
-      attr("stroke", "black")
+      attr("stroke", "black").
+      on("mouseover.highlight", ->
+        d3.select(this).attr("fill", "white")
+      ).
+      on("mouseout.highlight", (d) ->
+        d3.select(this).attr("fill", colorScale(d.key))
+      ).
+      transition().
+      duration(2500).
+      attr("height", (d) -> barHeight d.values).
+      attr("y", (d, i) => @topPadding + @height - barHeight(d.values))
 
     svg.selectAll("text.yLabel").
       data(years).

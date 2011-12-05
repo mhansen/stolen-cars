@@ -13,7 +13,6 @@ window.MakeLegend = Backbone.View.extend
       key((d) -> d.make or "No Make").
       rollup((d) -> d.length).
       entries(vehicles)
-    console.log makes
 
     makes.sort (a, b) -> b.values - a.values
 
