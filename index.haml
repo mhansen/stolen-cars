@@ -39,15 +39,15 @@
 
 #tabs.container
   %ul.tabs(data-tabs="tabs")
-    %li.active
+    %li
       %a(href="#color") Vehicle Color
     %li
       %a(href="#make") Vehicle Make
-    %li
+    %li.active
       %a(href="#year") Vehicle Age
 
 .container.pill-content
-  #color.active
+  #color
     .mostPopular
     .legend
     .pictogram
@@ -55,7 +55,7 @@
     .mostPopular
     .legend
     .pictogram
-  #year
+  #year.active
     .histogram
     .pictogram
 
@@ -63,6 +63,7 @@
 %script(src="lib/underscore-min.js")
 %script(src="lib/d3.min.js")
 %script(src="lib/d3.time.min.js")
+%script(src="lib/d3.csv.min.js")
 %script(src="lib/backbone-min.js")
 %script(src="lib/bootstrap-twipsy.js")
 %script(src="lib/bootstrap-popover.js")
